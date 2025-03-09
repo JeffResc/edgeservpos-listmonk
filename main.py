@@ -14,8 +14,8 @@ edgeservpos_email = os.environ['EDGESERVPOS_EMAIL']
 edgeservpos_password = os.environ['EDGESERVPOS_PASSWORD']
 edgeservpos_restaurant_code = os.environ['EDGESERVPOS_RESTAURANT_CODE']
 
-newsletter_api_username = os.environ['NEWLETTER_API_USERNAME']
-newsletter_api_password = os.environ['NEWLETTER_API_PASSWORD']
+newsletter_api_username = os.environ['NEWSLETTER_API_USERNAME']
+newsletter_api_password = os.environ['NEWSLETTER_API_PASSWORD']
 
 tmp_dir = os.environ['TMP_DIR']
 
