@@ -2,6 +2,7 @@ import time
 import os
 import csv
 import requests
+import concurrent.futures
 from playwright.sync_api import sync_playwright
 from requests.auth import HTTPBasicAuth
 
@@ -92,52 +93,51 @@ def download_report(download_dir, file_name):
         finally:
             browser.close()
 
-def process_report(download_dir, file_name):
-	input_file = os.path.join(download_dir, file_name)
+def process_email(newsletter_user_endpoint, email, first_name, last_name, auth):
+    if not is_valid_email(email):
+        print(f"{email} is invalid, skipping...")
+        return
 
-	with open(input_file, "r", encoding="utf-8", errors="ignore") as infile:
-		reader = csv.reader(infile)
-		newsletter_user_endpoint = newsletter_api_base+"subscribers/"
+    print(f"Checking if {email} is enrolled...")
+    response = requests.get(newsletter_user_endpoint + email, auth=auth)
 
-		for row in reader:
-			if len(row) >= 3 and "@" in row[2]:
-				cleaned_row = [col.strip() for col in row[:3]]
+    if response.status_code == 200:
+        print(f"{email} already enrolled, skipping...")
+    else:
+        print(f"{email} not enrolled, enrolling...")
+        data = {
+            "email": email,
+            "first_name": first_name,
+            "last_name": last_name,
+            "lists": [{"id": 1, "value": 1}],
+            "status": "confirmed"
+        }
+        response = requests.put(newsletter_user_endpoint + email, auth=auth, json=data)
 
-				first_name = cleaned_row[0]
-				last_name = cleaned_row[1]
-				email = cleaned_row[2]
+        if response.status_code == 201:
+            print(f"{email} successfully enrolled!")
+        else:
+            print(f"Request failed with status code: {response.status_code}")
+            print("Response:", response.text)
 
-				if not is_valid_email(email):
-					print(f"{email} is invalid, skipping...")
-					continue
-
-				print(f"Checking if {email} is enrolled...")
-				response = requests.get(newsletter_user_endpoint+email, auth=HTTPBasicAuth(newsletter_api_username, newsletter_api_password))
-
-				if response.status_code == 200:
-					print(f"{email} already enrolled, skipping...")
-				else:
-					print(f"{email} not enrolled, enrolling...")
-
-					data = {
-						"email": email,
-						"first_name": first_name,
-						"last_name": last_name,
-						"lists": [
-							{
-								"id": 1,
-								"value": 1
-							}
-						],
-						"status": "confirmed"
-					}
-					response = requests.put(newsletter_user_endpoint+email, auth=HTTPBasicAuth(newsletter_api_username, newsletter_api_password), json=data)
-
-					if response.status_code == 201:
-						print(f"{email} successfully enrolled!")
-					else:
-						print(f"Request failed with status code: {response.status_code}")
-						print("Response:", response.text)
+def process_report(download_dir, file_name, max_workers=10):
+    input_file = os.path.join(download_dir, file_name)
+    newsletter_user_endpoint = newsletter_api_base + "subscribers/"
+    auth = HTTPBasicAuth(newsletter_api_username, newsletter_api_password)
+    
+    with open(input_file, "r", encoding="utf-8", errors="ignore") as infile:
+        reader = csv.reader(infile)
+        
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = []
+            for row in reader:
+                if len(row) >= 3 and "@" in row[2]:
+                    cleaned_row = [col.strip() for col in row[:3]]
+                    first_name, last_name, email = cleaned_row
+                    futures.append(executor.submit(process_email, newsletter_user_endpoint, email, first_name, last_name, auth))
+            
+            # Wait for all tasks to complete
+            concurrent.futures.wait(futures)
 
 if __name__ == "__main__":
 	file_name = "guest-information-report.csv"
