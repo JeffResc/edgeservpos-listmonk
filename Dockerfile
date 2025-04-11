@@ -1,21 +1,19 @@
-# Use official Python image
-FROM mcr.microsoft.com/playwright/python:v1.50.0
+# Stage 1: Build the Go binary
+FROM golang:1.24 AS builder
 
-# Set the working directory
 WORKDIR /app
 
-# Copy the application files
-COPY . /app
+COPY go.mod go.sum ./
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN go mod download
 
-# Install Playwright browsers (if not already installed)
-RUN playwright install chromium
+COPY main.go .
 
-# Set environment variables for Playwright
-ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-ENV PYTHONUNBUFFERED=1
+RUN CGO_ENABLED=0 GOOS=linux go build -o app main.go
 
-# Command to run your Playwright script
-CMD ["python", "main.py"]
+# Stage 2: Create a minimal image with distroless
+FROM gcr.io/distroless/static
+
+COPY --from=builder /app/app /
+
+ENTRYPOINT ["/app"]
