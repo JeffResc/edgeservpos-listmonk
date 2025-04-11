@@ -184,6 +184,7 @@ func sendToListmonk(client *listmonk.Client, customer Customer) {
 		cSubSvc.Name(fullName)
 		cSubSvc.ListIds([]uint{3})
 		cSubSvc.Attributes(subAttribs)
+		cSubSvc.PreconfirmSubscriptions(true)
 		sub, err := cSubSvc.Do(context.Background())
 		if err != nil {
 			if apiErr, ok := err.(*listmonk.APIError); ok && apiErr.Code == 400 && apiErr.Message == "Invalid email." {
