@@ -1,46 +1,17 @@
 package main
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 	"regexp"
 	"strings"
 	"time"
 
 	"github.com/Exayn/go-listmonk"
+	"github.com/jeffresc/go-edgeservpos"
 )
-
-// OAuthResponse represents the expected JSON response from the OAuth token endpoint
-type OAuthResponse struct {
-	Value string `json:"value"`
-}
-
-// Customer represents each customer in the response array
-type Customer struct {
-	ServerID      int       `json:"serverId"`
-	FirstName     string    `json:"firstName"`
-	LastName      string    `json:"lastName"`
-	EmailAddress  string    `json:"emailAddress"`
-	Point         int       `json:"point"`
-	PhoneNumbers  []string  `json:"phoneNumbers"`
-	LastVisitDate int64     `json:"lastVisitDate"`
-	Addresses     []Address `json:"addresses"`
-}
-
-// Address represents a customer's address
-type Address struct {
-	Address  string `json:"address"`
-	Address2 string `json:"address2"`
-	City     string `json:"city"`
-	State    string `json:"state"`
-	ZipCode  string `json:"zipCode"`
-}
 
 func main() {
 	// Load environment variables
@@ -54,11 +25,14 @@ func main() {
 	listmonkUser := os.Getenv("LISTMONK_USER")
 	listmonkToken := os.Getenv("LISTMONK_TOKEN")
 
-	// Step 1: Get OAuth Token
-	token := getOAuthToken(edgeservPOSHost, restaurantCode, clientID, clientSecret, username, password)
+	// Create EdgeServPOS client
+	client := edgeservpos.NewClient(edgeservPOSHost, restaurantCode, clientID, clientSecret, username, password)
 
-	// Step 2: Get Customer Data
-	customers := getCustomerData(edgeservPOSHost, restaurantCode, token)
+	// Get Customer Data
+	customers, err := client.ListCustomers()
+	if err != nil {
+		log.Fatalf("Error getting customers: %v", err)
+	}
 
 	// Step 3: Process and Send to Listmonk
 	listmonkClient := listmonk.NewClient(listmonkHost, &listmonkUser, &listmonkToken)
@@ -69,76 +43,8 @@ func main() {
 	}
 }
 
-// Function to retrieve OAuth token
-func getOAuthToken(edgeservPOSHost, restaurantCode, clientID, clientSecret, username, password string) string {
-	tokenURL := fmt.Sprintf("%s/%s/oauth/token?grant_type=password&client_id=%s&client_secret=%s&username=%s&password=%s",
-		edgeservPOSHost, restaurantCode, clientID, clientSecret, username, password)
-
-	resp, err := http.Get(tokenURL)
-	if err != nil {
-		log.Fatalf("Error fetching token: %v", err)
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalf("Error reading token response: %v", err)
-	}
-
-	var tokenResp OAuthResponse
-	if err := json.Unmarshal(body, &tokenResp); err != nil {
-		log.Fatalf("Error parsing token JSON: %v", err)
-	}
-
-	return tokenResp.Value
-}
-
-// Function to retrieve customer data
-func getCustomerData(edgeservPOSHost, restaurantCode, token string) []Customer {
-	customerListURL := fmt.Sprintf("%s/%s/backofhouse/customer/list", edgeservPOSHost, restaurantCode)
-
-	requestBody := map[string]interface{}{
-		"serverId":        nil,
-		"searchValue":     "",
-		"addressRequired": false,
-		"zipRequired":     false,
-	}
-
-	jsonData, err := json.Marshal(requestBody)
-	if err != nil {
-		log.Fatalf("Error marshalling request body: %v", err)
-	}
-
-	req, err := http.NewRequest("POST", customerListURL, bytes.NewBuffer(jsonData))
-	if err != nil {
-		log.Fatalf("Error creating customer request: %v", err)
-	}
-
-	req.Header.Set("Authorization", "Bearer "+token)
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatalf("Error fetching customer list: %v", err)
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalf("Error reading customer response: %v", err)
-	}
-
-	var customers []Customer
-	if err := json.Unmarshal(body, &customers); err != nil {
-		log.Fatalf("Error parsing customer JSON: %v", err)
-	}
-
-	return customers
-}
-
 // Function to send customer data to FluentCRM
-func sendToListmonk(client *listmonk.Client, customer Customer) {
+func sendToListmonk(client *listmonk.Client, customer edgeservpos.Customer) {
 	// Extract and clean phone number
 	phone := ""
 	if len(customer.PhoneNumbers) > 0 {
