@@ -43,7 +43,7 @@ func main() {
 	}
 }
 
-// Function to send customer data to FluentCRM
+// Function to send customer data to Listmonk
 func sendToListmonk(client *listmonk.Client, customer edgeservpos.Customer) {
 	// Extract and clean phone number
 	phone := ""
