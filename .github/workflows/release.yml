@@ -1,8 +1,8 @@
 name: Release Docker Image to GHCR
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [main]
 
 jobs:
   release:
@@ -19,9 +19,9 @@ jobs:
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
-      - name: Extract version from GitHub release
+      - name: Extract git commit digest
         id: version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+        run: echo "VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Convert repository name to lowercase
         run: echo "REPO_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
