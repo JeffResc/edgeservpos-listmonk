@@ -4,6 +4,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/jeffresc/go-edgeservpos v0.0.0-20250826212441-32d57075b9bc h1:kYEXNwOe+Su+bWeF/iYMmhTiSrJiSYqRiRq4zd0Tcgk=
 github.com/jeffresc/go-edgeservpos v0.0.0-20250826212441-32d57075b9bc/go.mod h1:4Mt4oCyN3Oasw8Om/D/I9KxgkWl+huj8oWq7mqvFdm0=
+github.com/jeffresc/go-edgeservpos v0.0.0-20250826214415-48d15fc9cfdc h1:AKPWyv7DLJE4MxOeP4F2iaxWMddhtbIwN9sxI/HooaY=
+github.com/jeffresc/go-edgeservpos v0.0.0-20250826214415-48d15fc9cfdc/go.mod h1:4Mt4oCyN3Oasw8Om/D/I9KxgkWl+huj8oWq7mqvFdm0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.5.0 h1:1zr/of2m5FGMsad5YfcqgdqdWrIhu+EBEJRhR1U7z/c=
