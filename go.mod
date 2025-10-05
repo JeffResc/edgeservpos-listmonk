@@ -1,4 +1,4 @@
-module github.com/jeffresc/edgeservpos-monklist
+module github.com/jeffresc/edgeservpos-listmonk
 
 go 1.25.0
 
