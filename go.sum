@@ -10,6 +10,8 @@ github.com/jeffresc/go-edgeservpos v0.0.0-20250908143749-833e8ec531c6 h1:wqt1SHH
 github.com/jeffresc/go-edgeservpos v0.0.0-20250908143749-833e8ec531c6/go.mod h1:4Mt4oCyN3Oasw8Om/D/I9KxgkWl+huj8oWq7mqvFdm0=
 github.com/jeffresc/go-edgeservpos v0.0.0-20251018230746-490be096ee11 h1:7maEAyBl9kLDJMhYRFsqqKwG6SG1GdFAKzxfayLzcY8=
 github.com/jeffresc/go-edgeservpos v0.0.0-20251018230746-490be096ee11/go.mod h1:4Mt4oCyN3Oasw8Om/D/I9KxgkWl+huj8oWq7mqvFdm0=
+github.com/jeffresc/go-edgeservpos v0.0.0-20251202163707-f550d52246b6 h1:cm29UHIxP0XJKbVWFXKlI9c6QG0oBsJjxswIswlf990=
+github.com/jeffresc/go-edgeservpos v0.0.0-20251202163707-f550d52246b6/go.mod h1:4Mt4oCyN3Oasw8Om/D/I9KxgkWl+huj8oWq7mqvFdm0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.5.0 h1:1zr/of2m5FGMsad5YfcqgdqdWrIhu+EBEJRhR1U7z/c=
