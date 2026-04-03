@@ -1,16 +1,31 @@
-name: Release Docker Image to GHCR
+name: Release
 
 on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+  pull-requests: write
+  packages: write
+
 jobs:
-  release:
-    name: Build & Push Docker Image
+  release-please:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          release-type: go
+
+  docker:
+    name: Build & Push Docker Image
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -19,19 +34,15 @@ jobs:
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
-      - name: Extract git commit digest
-        id: version
-        run: echo "VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
       - name: Convert repository name to lowercase
         run: echo "REPO_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       - name: Build and tag Docker image
         run: |
-          docker build -t ghcr.io/${{ env.REPO_NAME }}:${{ env.VERSION }} .
-          docker tag ghcr.io/${{ env.REPO_NAME }}:${{ env.VERSION }} ghcr.io/${{ env.REPO_NAME }}:latest
+          docker build -t ghcr.io/${{ env.REPO_NAME }}:${{ needs.release-please.outputs.tag_name }} .
+          docker tag ghcr.io/${{ env.REPO_NAME }}:${{ needs.release-please.outputs.tag_name }} ghcr.io/${{ env.REPO_NAME }}:latest
 
       - name: Push Docker image to GHCR
         run: |
-          docker push ghcr.io/${{ env.REPO_NAME }}:${{ env.VERSION }}
+          docker push ghcr.io/${{ env.REPO_NAME }}:${{ needs.release-please.outputs.tag_name }}
           docker push ghcr.io/${{ env.REPO_NAME }}:latest
