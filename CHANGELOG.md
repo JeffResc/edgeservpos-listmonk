@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.0](https://github.com/JeffResc/edgeservpos-listmonk/compare/v0.1.0...v0.2.0) (2026-04-03)
+
+
+### Features
+
+* add release-please config with changelog sections ([b766db6](https://github.com/JeffResc/edgeservpos-listmonk/commit/b766db66b02c19dc850d827e0ef88c57df5578e0))
+* add release-please config with changelog sections ([79e93ce](https://github.com/JeffResc/edgeservpos-listmonk/commit/79e93ce33c7be0b0cab954fe30eb52788719fb9c))
+* add release-type to config and wire up workflow ([4998290](https://github.com/JeffResc/edgeservpos-listmonk/commit/4998290178f698d64f100543c454a2646e784925))
+
 ## 0.1.0 (2026-04-03)
 
 
