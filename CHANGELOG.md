@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.0](https://github.com/JeffResc/edgeservpos-listmonk/compare/v0.1.0...v0.2.0) (2026-04-23)
+
+
+### Features
+
+* add release-please config with changelog sections ([b766db6](https://github.com/JeffResc/edgeservpos-listmonk/commit/b766db66b02c19dc850d827e0ef88c57df5578e0))
+* add release-please config with changelog sections ([79e93ce](https://github.com/JeffResc/edgeservpos-listmonk/commit/79e93ce33c7be0b0cab954fe30eb52788719fb9c))
+* add release-type to config and wire up workflow ([4998290](https://github.com/JeffResc/edgeservpos-listmonk/commit/4998290178f698d64f100543c454a2646e784925))
+
+
+### Miscellaneous
+
+* **deps:** update github.com/jeffresc/go-edgeservpos digest to a980aa8 ([870fee7](https://github.com/JeffResc/edgeservpos-listmonk/commit/870fee7a17a47b14b8cfdc5dfb707cc63e754db1))
+* **deps:** update github.com/jeffresc/go-edgeservpos digest to f1bb141 ([4f4ce1f](https://github.com/JeffResc/edgeservpos-listmonk/commit/4f4ce1f4e7302d68e77d2792aae80ce1b8da4d64))
+* **deps:** update googleapis/release-please-action action to v5 ([2719a20](https://github.com/JeffResc/edgeservpos-listmonk/commit/2719a209ae9d11a525a647ef2fbbc0e9e9d9d9da))
+
 ## 0.1.0 (2026-04-03)
 
 
